@@ -27,6 +27,7 @@ namespace Fractal {
         virtual void* get_native_window() = 0;
         virtual void update() = 0;
         virtual void destroy() = 0;
+        virtual void quit() = 0;
         
         inline WindowProperties* properties() { return &m_properties; }
         inline bool destroyed() const { return m_destroyed; }

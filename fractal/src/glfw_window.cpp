@@ -1,5 +1,5 @@
 #include "glfw_window.h"
-#include "error.h"
+#include "log.h"
 
 #include <cstdio>
 
@@ -9,10 +9,10 @@ namespace Fractal {
 
     GLFWWindow::GLFWWindow(WindowProperties properties, const EventCallbackFn& event_callback) : Window(properties, event_callback) {
         glfwSetErrorCallback(error_callback);
-        if (!glfwInit()) fatal_error("failed to initialize glfw.\n");
+        if (!glfwInit()) FRACTAL_LOG_ERROR("failed to initialize glfw.\n");
 
         m_window = glfwCreateWindow(properties.m_width, properties.m_height, properties.m_name, nullptr, nullptr);
-        if (!m_window) fatal_error("failed to create glfw window.\n");
+        if (!m_window) FRACTAL_LOG_ERROR("failed to create glfw window.\n");
 
         glfw_window_counter++;
 
@@ -48,9 +48,10 @@ namespace Fractal {
         m_destroyed = true;
         glfw_window_counter--;
         glfwDestroyWindow(m_window);
+    }
 
-        if (glfw_window_counter == 0)
-            glfwTerminate();
+    void GLFWWindow::quit() {
+        glfwTerminate();
     }
 
     void* GLFWWindow::get_native_window() {

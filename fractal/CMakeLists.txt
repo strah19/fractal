@@ -9,9 +9,12 @@ add_library(FRACTAL ${SOURCES})
 add_subdirectory("libs/glad")
 list(APPEND EXTRA_LIBS GLAD)
 
+add_subdirectory(libs/imgui)
+list(APPEND EXTRA_LIBS IMGUI)
+
 #Add GLFW
-find_package( OpenGL REQUIRED )
-include_directories( ${OPENGL_INCLUDE_DIRS} )
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)

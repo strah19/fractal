@@ -2,10 +2,9 @@
 #define FRACTAL_H
 
 #include <stdint.h>
-
-namespace Fractal {
-    int version_major();
-    int version_minor();
-} // namespace Fractal
+#include "renderer_commands.h"
+#include "layer.h"
+#include "file.h"
+#include "texture.h"
 
 #endif // !FRACTAL_H

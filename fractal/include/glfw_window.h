@@ -20,6 +20,7 @@ namespace Fractal {
         virtual void* get_native_window() override;
         virtual void update() override;
         virtual void destroy() override;
+        virtual void quit() override;
     private:
         GLFWwindow* m_window = nullptr;
     };

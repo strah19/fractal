@@ -7,6 +7,10 @@
 #include "keyboard_event.h"
 #include "mouse_event.h"
 #include "window_event.h"
+#include "layer.h"
+#include "imgui_layer.h"
+
+int main(int argc, char* argv[]);
 
 namespace Fractal {
     class Application {
@@ -15,6 +19,10 @@ namespace Fractal {
         void initialize(const char* name = "Fractal Application", uint32_t width = 1280, uint32_t height = 720);
         void run();
 
+        static Application& get() { return *m_instance; }
+        Window* get_window() { return m_window; }
+        void push_layer(Layer* layer);
+
         virtual void on_user_event(Event& event) { }
         virtual void on_create() { }
         virtual void on_update() { }
@@ -22,11 +30,19 @@ namespace Fractal {
     protected:
         WindowProperties m_properties;
         Window* m_window = nullptr;
+        LayerStack m_layers; 
+    	ImGuiLayer* m_imgui_layer;
     private:
   		void on_close(const QuitEvent& event);
 		void on_resize(const ResizeEvent& event);
 		void on_event(Event& event);  
+    private:
+        static Application* m_instance;
+        float m_lastframe_time = 0.0f;
+		friend int ::main(int argc, char** argv);
     };
+
+    static Application* create_application();
 } // namespace Fractal
 
 #endif // !APPLICATION_H
