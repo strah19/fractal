@@ -27,6 +27,7 @@ namespace Fractal {
         virtual void on_create() { }
         virtual void on_update() { }
         virtual void on_destroy() { }
+        virtual void on_gui() { }
     protected:
         WindowProperties m_properties;
         Window* m_window = nullptr;

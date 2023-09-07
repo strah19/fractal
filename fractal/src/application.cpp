@@ -19,11 +19,11 @@ namespace Fractal {
         m_window = Window::create_glfw_window(m_properties, BIND_EVENT(on_event));
         FRACTAL_LOG("Initalized application '%s' with size %d by %d", name, width, height);
 
+        RendererCommands::initialize();
         m_imgui_layer = new ImGuiLayer();
         push_layer(m_imgui_layer);
         FRACTAL_LOG("Initialization complete");
 
-        RendererCommands::initialize();
 
         on_create();
     }
@@ -36,10 +36,7 @@ namespace Fractal {
 
     void Application::run() {
         while (!m_window->destroyed()) {
-            on_update();
-            m_window->update();
-
-        	float time = Fractal::Time::get_time();
+        	float time = Fractal::Time::get_time(); 
 			float delta = time - m_lastframe_time;
 			m_lastframe_time = time;
 
@@ -50,8 +47,12 @@ namespace Fractal {
 
 			for (Layer* layer : m_layers)
 				layer->update_gui();
+            on_gui();
 
             m_imgui_layer->end();
+
+            m_window->update();
+            on_update();
         }
     }
 
