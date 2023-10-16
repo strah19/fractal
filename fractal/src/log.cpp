@@ -163,10 +163,10 @@ namespace Fractal {
     static LogFormat def_format_good;
 
     void Logs::intialize_loggers() {
-        error_format.initialize("{cR}Mu error[{ts}]: {l}{cDef}.\n");
+        error_format.initialize("{cR}Fractal error[{ts}]: {l}{cDef}.\n");
         error_log.set_log_format(&error_format);
 
-        warning_format.initialize("{cY}Mu warning[{ts}]: {l}{cDef}.\n");
+        warning_format.initialize("{cY}Fractal warning[{ts}]: {l}{cDef}.\n");
         warning_log.set_log_format(&warning_format);
 
         def_format.initialize("{cDef}[{ts}]: {l}{cDef}.\n");

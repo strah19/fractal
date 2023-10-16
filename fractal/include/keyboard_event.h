@@ -11,6 +11,9 @@ namespace Fractal {
 
     const char* name() const { return m_name; }
 
+    static int GetKeyBoardState(int const keycode);
+    static bool GetKeyPress(int const keycode);
+    
     int m_key;
     int m_scancode;
     int m_action;

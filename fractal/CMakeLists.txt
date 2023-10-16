@@ -23,6 +23,10 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory("libs/glfw-3.3.8")
 list(APPEND EXTRA_LIBS glfw)
 
+add_subdirectory("libs/glm")
+list(APPEND EXTRA_LIBS glm::glm)
+include_directories("libs/glm/glm")
+
 project(FRACTAL VERSION 1.0)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/include/config.h)

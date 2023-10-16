@@ -1,7 +1,13 @@
 #ifndef MOUSE_EVENT_H
 #define MOUSE_EVENT_H
 
+#include <glm/glm.hpp>
+#include "event.h"
+
 namespace Fractal {
+	void cursor_enable();
+	void cursor_disable();
+
 	struct MouseButtonEvents : public Event {
 		MouseButtonEvents(bool action, int button_id)
 			: Event("Mouse Button Event"), m_action(action), m_button_id(button_id) { }
@@ -19,6 +25,8 @@ namespace Fractal {
 		virtual ~MousePositionEvent() = default;
 
 		const char* name() const { return m_name; }
+
+		static glm::vec2 GetMousePosition();
 
 		float m_x, m_y;
 	};

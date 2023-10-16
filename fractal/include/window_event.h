@@ -1,6 +1,8 @@
 #ifndef WINDOW_EVENT_H
 #define WINDOW_EVENT_H
 
+#include "event.h"
+
 namespace Fractal {	
     struct QuitEvent : public Event {
 		QuitEvent()
