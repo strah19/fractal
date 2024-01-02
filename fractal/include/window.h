@@ -5,6 +5,10 @@
 #include "event.h"
 
 namespace Fractal {
+    enum WindowFlags {
+        WINF_FULLSCREEN = 0x01
+    };
+
     struct WindowProperties {
         const char* m_name;
         uint32_t m_width = 0;
@@ -13,8 +17,10 @@ namespace Fractal {
         uint32_t m_x = 0;
         uint32_t m_y = 0;
 
+        int flags = 0;
+
         WindowProperties() = default;
-        WindowProperties(const char* name, uint32_t width, uint32_t height) : m_name(name), m_width(width), m_height(height) { }
+        WindowProperties(const char* name, uint32_t width, uint32_t height, int flags) : m_name(name), m_width(width), m_height(height), flags(flags) { }
     };
     
     class Window {

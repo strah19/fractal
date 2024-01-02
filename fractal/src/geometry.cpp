@@ -20,7 +20,7 @@ namespace Fractal {
 	}
 
 	glm::mat4 Geometry::GetModelMatrix(const glm::vec3& position, const glm::vec3& scalar) {
-		return glm::translate(glm::mat4(1.0f), { position.x, position.y, position.z }) * glm::scale(glm::mat4(1.0f), { scalar.x, scalar.y, 1.0f });
+		return glm::translate(glm::mat4(1.0f), { position.x, position.y, position.z }) * glm::scale(glm::mat4(1.0f), { scalar.x, scalar.y, scalar.z });
 	}
 
 	glm::mat4 Geometry::GetRotatedModelMatrix(const glm::vec3& position, const glm::vec3& scalar, const glm::vec3& rotation_orientation, float degree) {
@@ -31,7 +31,7 @@ namespace Fractal {
 		return (trans * rotate * scale);
 	}
 
-	uint32_t Quad::index_offset = 0;
+	static uint32_t index_offset = 0;
 
 	uint32_t Geometry::AddIndice(uint32_t indices, uint32_t offset) {
 		return offset + indices;
@@ -41,50 +41,50 @@ namespace Fractal {
 		*indices += count;
 	}
 
-	static RendererFrame* quad_renderer;
-	void Quad::Renderer(RendererFrame* ren) {
-		quad_renderer = ren;
+	static RendererFrame* renderer;
+	void SetRenderer(RendererFrame* ren) {
+		renderer = ren;
 	}
 
 	void Quad::DrawQuad(const glm::vec3& position, const glm::vec2& scalar, const glm::vec4& color) {
-		glm::mat4 model = (quad_renderer->GetFlags() & RenderFlags::TopLeft) ? GetModelMatrix({ position.x + (scalar.x / 2), position.y + (scalar.y / 2), position.z },
+		glm::mat4 model = (renderer->GetFlags() & RenderFlags::TopLeft) ? GetModelMatrix({ position.x + (scalar.x / 2), position.y + (scalar.y / 2), position.z },
 			glm::vec3(scalar.x, scalar.y, 1.0f)) : GetModelMatrix(position, { scalar.x, scalar.y, 1.0f });
 		Mesh m = CreateGeometry(model, color, -1.0f, TEX_COORDS, QUAD_VERTEX_COUNT, QUAD_POSITIONS);
 
 		AddIndices(m);
-		quad_renderer->Submit(m);
+		renderer->Submit(m);
 	}
 
 	void Quad::DrawQuad(const glm::vec3& position, const glm::vec2& scalar, uint32_t texture, const glm::vec4& color) {
-		glm::mat4 model = (quad_renderer->GetFlags() & RenderFlags::TopLeft) ? GetModelMatrix({ position.x + (scalar.x / 2), position.y + (scalar.y / 2), position.z },
+		glm::mat4 model = (renderer->GetFlags() & RenderFlags::TopLeft) ? GetModelMatrix({ position.x + (scalar.x / 2), position.y + (scalar.y / 2), position.z },
 			glm::vec3(scalar.x, scalar.y, 1.0f)) : GetModelMatrix(position, { scalar.x, scalar.y, 1.0f });
-		Mesh m = CreateGeometry(model, color, quad_renderer->GetGraphicsDevice()->CalculateTextureIndex(texture), TEX_COORDS, QUAD_VERTEX_COUNT, QUAD_POSITIONS);
+		Mesh m = CreateGeometry(model, color, renderer->GetGraphicsDevice()->CalculateTextureIndex(texture), TEX_COORDS, QUAD_VERTEX_COUNT, QUAD_POSITIONS);
 
 		AddIndices(m);
-		quad_renderer->Submit(m);
+		renderer->Submit(m);
 	}
 
 	void Quad::DrawQuad(const glm::vec3& position, float degree, const glm::vec3& orientation, const glm::vec2& scalar, const glm::vec4& color) {
-		glm::mat4 model = (quad_renderer->GetFlags() & RenderFlags::TopLeft) ? GetRotatedModelMatrix({ position.x + (scalar.x / 2), position.y + (scalar.y / 2), position.z },
+		glm::mat4 model = (renderer->GetFlags() & RenderFlags::TopLeft) ? GetRotatedModelMatrix({ position.x + (scalar.x / 2), position.y + (scalar.y / 2), position.z },
 			glm::vec3(scalar.x, scalar.y, 1.0f), orientation, degree) : GetRotatedModelMatrix(position, { scalar.x, scalar.y, 1.0f }, orientation, degree);
 		Mesh m = CreateGeometry(model, color, -1.0f, TEX_COORDS, QUAD_VERTEX_COUNT, QUAD_POSITIONS);
 
 		AddIndices(m);
-		quad_renderer->Submit(m);
+		renderer->Submit(m);
 	}
 
 	void Quad::DrawQuad(const QuadModel& model) {
-		glm::mat4 mat = (quad_renderer->GetFlags() & RenderFlags::TopLeft) ? GetRotatedModelMatrix({ model.position.x + (model.scalar.x / 2), model.position.y + (model.scalar.y / 2), model.position.z },
+		glm::mat4 mat = (renderer->GetFlags() & RenderFlags::TopLeft) ? GetRotatedModelMatrix({ model.position.x + (model.scalar.x / 2), model.position.y + (model.scalar.y / 2), model.position.z },
 			model.scalar, model.orientation, model.degree) :
 			GetRotatedModelMatrix(model.position, model.scalar, model.orientation, model.degree);
 		Mesh m = CreateGeometry(mat, model.color, model.texture_id, model.tex_coords, QUAD_VERTEX_COUNT, QUAD_POSITIONS);
 
 		AddIndices(m);
-		quad_renderer->Submit(m);
+		renderer->Submit(m);
 	}
 
 	void Quad::AddIndices(Mesh& mesh) {
-		if (quad_renderer->GetGraphicsDevice()->Empty())
+		if (renderer->GetGraphicsDevice()->Empty())
 			index_offset = 0;
 
 		mesh.indices.push_back(AddIndice(index_offset, 0));
@@ -95,5 +95,25 @@ namespace Fractal {
 		mesh.indices.push_back(AddIndice(index_offset, 0));
 
 		UpdateIndexOffset(&index_offset, 4);
+	}
+
+	void Cube::DrawCube(const glm::vec3& position, const glm::vec3& scalar, const glm::vec4& color) {
+		glm::mat4 model = (renderer->GetFlags() & RenderFlags::TopLeft) ? GetModelMatrix({ position.x + (scalar.x / 2), position.y + (scalar.y / 2), position.z + (scalar.z / 2) },
+			glm::vec3(scalar.x, scalar.y, scalar.z)) : GetModelMatrix(position, { scalar.x, scalar.y, scalar.z });
+		Mesh m = CreateGeometry(model, color, -1.0f, CUBE_TEX_COORDS, CUBE_VERTEX_COUNT, CUBE_POSITIONS);
+
+		AddIndices(m);
+		renderer->Submit(m);
+	}
+
+	void Cube::AddIndices(Mesh& mesh) {
+		if (renderer->GetGraphicsDevice()->Empty())
+			index_offset = 0;
+
+		for (int i = 0; i < CUBE_INDICES_COUNT; i++) {
+			mesh.indices.push_back(AddIndice(index_offset, cube_indices[i]));
+		}
+
+		UpdateIndexOffset(&index_offset, 8);
 	}
 }

@@ -13,9 +13,9 @@ namespace Fractal {
         FRACTAL_LOG("Destroying Application"); 
     }
 
-    void Application::initialize(const char* name, uint32_t width, uint32_t height) {
+    void Application::initialize(const char* name, uint32_t width, uint32_t height, int flags) {
         m_instance = this;
-        m_properties = WindowProperties(name, width, height);
+        m_properties = WindowProperties(name, width, height, flags);
         m_window = Window::create_glfw_window(m_properties, BIND_EVENT(on_event));
         FRACTAL_LOG("Initalized application '%s' with size %d by %d", name, width, height);
 

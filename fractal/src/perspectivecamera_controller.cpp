@@ -17,6 +17,7 @@
 
 #include "perspectivecamera_controller.h"
 #include <GLFW/glfw3.h>
+#include "log.h"
 
 namespace Fractal {
 	constexpr float SMALLEST_ZOOM = 1.0f;
@@ -86,10 +87,9 @@ namespace Fractal {
 	*/
 	void PerspectiveCameraController::OnEvent(Event& event) {
 		EventDispatcher dispatcher(&event);
-		if (!freeze) {
-			dispatcher.dispatch<KeyboardEvents>(BIND_EVENT(KeyboardHandler));
-			dispatcher.dispatch<MouseWheelEvent>(BIND_EVENT(MouseWheelHandler));
-		}
+
+		dispatcher.dispatch<KeyboardEvents>(BIND_EVENT(KeyboardHandler));
+		dispatcher.dispatch<MouseWheelEvent>(BIND_EVENT(MouseWheelHandler));
 		dispatcher.dispatch<ResizeEvent>(BIND_EVENT(WindowResizeHandler));
 	}
 
@@ -127,6 +127,8 @@ namespace Fractal {
 
 		if (this->freeze)
 			cursor_enable();
+		else
+			cursor_disable();
 	}
 
 	/**
@@ -135,13 +137,16 @@ namespace Fractal {
 	* @param KeyboardEvents& keybaord events.
 	*/
 	void PerspectiveCameraController::KeyboardHandler(KeyboardEvents& keyboard) {
-		if (KeyboardEvents::GetKeyPress(GLFW_KEY_M)) {
+		if (KeyboardEvents::GetKeyPress(GLFW_KEY_M) && !freeze) {
 			in_camera_mode = !in_camera_mode;
 			last_mouse_position = { MousePositionEvent::GetMousePosition().x, MousePositionEvent::GetMousePosition().y };
 			if (!in_camera_mode)
 				cursor_enable();
 			else
 				cursor_disable();
+		}
+		if (KeyboardEvents::GetKeyPress(GLFW_KEY_F)) {
+			SetFreeze(!this->freeze);
 		}
 	}
 }

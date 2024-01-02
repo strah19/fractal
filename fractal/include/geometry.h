@@ -12,10 +12,6 @@ namespace Fractal {
 		uint32_t AddIndice(uint32_t indices, uint32_t offset);
 	};
 
-	class Triangle {
-
-	};
-
 	struct QuadModel {
 		glm::vec3 position = { 0, 0, 0 };
 		glm::vec3 scalar = { 0, 0, 0 };
@@ -26,17 +22,22 @@ namespace Fractal {
 		float degree = 0;
 	};
 
+	void SetRenderer(RendererFrame* renderer);
 	class Quad {
 	public:
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& scalar, const glm::vec4& color);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& scalar, uint32_t texture, const glm::vec4& color = { -1, -1, -1, -1 });
 		static void DrawQuad(const glm::vec3& position, float degree, const glm::vec3& orientation, const glm::vec2& scalar, const glm::vec4& color);
 		static void DrawQuad(const QuadModel& model);
-		static void Renderer(RendererFrame* renderer);
 
 		static void AddIndices(Mesh& mesh);
-	private:
-		static uint32_t index_offset;
+	};
+
+	class Cube {
+	public:
+		static void DrawCube(const glm::vec3& position, const glm::vec3& scalar, const glm::vec4& color);
+
+		static void AddIndices(Mesh& mesh);
 	};
 }
 

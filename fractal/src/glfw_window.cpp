@@ -11,8 +11,10 @@ namespace Fractal {
         glfwSetErrorCallback(error_callback);
         if (!glfwInit()) FRACTAL_LOG_ERROR("failed to initialize glfw.\n");
 
+        glfwWindowHint(GLFW_MAXIMIZED, (properties.flags & WINF_FULLSCREEN) ? GLFW_TRUE : GLFW_FALSE);
         m_window = glfwCreateWindow(properties.m_width, properties.m_height, properties.m_name, nullptr, nullptr);
         if (!m_window) FRACTAL_LOG_ERROR("failed to create glfw window.\n");
+
 
         glfw_window_counter++;
 
@@ -35,6 +37,34 @@ namespace Fractal {
 			QuitEvent event;
 			m_event_callback(event);
 		});
+
+        glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+            EventCallbackFn& m_event_callback = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
+
+            KeyboardEvents event(key, scancode, action);
+            m_event_callback(event);
+        });
+
+        glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {
+            EventCallbackFn& m_event_callback = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
+
+            MouseButtonEvents event(button, action);
+            m_event_callback(event);
+        });
+
+        glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xOffset, double yOffset) {
+            EventCallbackFn& m_event_callback = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
+
+            MouseWheelEvent event(xOffset, yOffset);
+            m_event_callback(event);
+        });
+
+        glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos) {
+            EventCallbackFn& m_event_callback = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
+
+            MousePositionEvent event(xPos, yPos);
+            m_event_callback(event);
+        }); 
 
         m_destroyed = false;
     }

@@ -21,6 +21,42 @@ namespace Fractal {
 		{ -0.5f,  0.5f, 0.0f, 1.0f }
 	};
 
+	constexpr glm::vec2 CUBE_TEX_COORDS[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+	constexpr size_t CUBE_VERTEX_COUNT = 8;
+	constexpr glm::vec4 CUBE_POSITIONS[CUBE_VERTEX_COUNT] = {
+		{ -1.0, -1.0,  1.0, 1.0 },
+		{ 1.0, -1.0,  1.0, 1.0 },
+		{ 1.0,  1.0,  1.0, 1.0 },
+		{ -1.0,  1.0,  1.0, 1.0 },
+	
+		{ -1.0, -1.0, -1.0, 1.0 },
+		{ 1.0, -1.0, -1.0, 1.0 },
+		{ 1.0,  1.0, -1.0, 1.0 },
+		{ -1.0,  1.0, -1.0, 1.0 }
+	};
+
+	constexpr size_t CUBE_INDICES_COUNT = 36;
+	constexpr int cube_indices[] = {
+		// front
+		0, 1, 2,
+		2, 3, 0,
+		// right
+		1, 5, 6,
+		6, 2, 1,
+		// back
+		7, 6, 5,
+		5, 4, 7,
+		// left
+		4, 0, 3,
+		3, 7, 4,
+		// bottom
+		4, 5, 1,
+		1, 0, 4,
+		// top
+		3, 2, 6,
+		6, 7, 3
+	};
+
 	struct DeviceStatistics {
 		uint32_t num_of_vertices = 0;
 		uint32_t num_of_indices = 0;
@@ -55,6 +91,7 @@ namespace Fractal {
 
 		inline void SetShader(Shader** shader) { this->shader = shader; }
 		inline bool Empty() const { return (vert_base == vert_ptr); }
+		inline const DeviceStatistics get_device_stats() const { return ds; }
 
 		inline uint32_t* IndexPtr() { return indx_ptr; }
 	protected:

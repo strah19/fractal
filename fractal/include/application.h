@@ -16,7 +16,7 @@ namespace Fractal {
     class Application {
     public:
         virtual ~Application();
-        void initialize(const char* name = "Fractal Application", uint32_t width = 1280, uint32_t height = 720);
+        void initialize(const char* name = "Fractal Application", uint32_t width = 1280, uint32_t height = 720, int flags = 0);
         void run();
 
         static Application& get() { return *m_instance; }

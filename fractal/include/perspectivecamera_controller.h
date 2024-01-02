@@ -19,6 +19,9 @@ namespace Fractal {
 
 		inline glm::vec3 GetFrontCamera() const { return camera_front; }
 		inline PerspectiveCamera& GetCamera() { return camera; }
+
+		inline const bool get_mode() const { return in_camera_mode; }
+		inline const bool get_freeze_state() const { return freeze; }
 	private:
 		void MouseWheelHandler(MouseWheelEvent& mousewheel);
 		void KeyboardHandler(KeyboardEvents& keyboard);
@@ -30,7 +33,6 @@ namespace Fractal {
 
 		glm::vec3 camera_pos = glm::vec3(0, 0, 3 );
 		glm::vec3 camera_target = glm::vec3(0, 0, 0);
-		glm::vec3 camera_direction = glm::normalize(camera_pos - camera_target);
 
 		float yaw = -90.0f, pitch = 0.0f;
 		glm::vec2 last_mouse_position = { 0, 0 };

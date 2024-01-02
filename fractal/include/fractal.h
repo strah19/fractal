@@ -10,6 +10,13 @@
 #include "renderer.h"
 #include "camera.h"
 #include "geometry.h"
+#include "frame_buffer.h"
+#include "utility.h"
+
+#include "event.h"
+#include "keyboard_event.h"
+#include "window_event.h"
+#include "mouse_event.h"
 
 #include "orthocamera.h"
 #include "orthocamera_controller.h"

@@ -160,6 +160,10 @@ namespace Fractal {
 		glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(mat4));
 	}
 
+	void Shader::set_vec2f(const std::string& name, const glm::vec2& vec2) {
+		glUniform2f(get_uniform_location(name), vec2.x, vec2.y);
+	}
+
 	void Shader::set_vec3f(const std::string& name, const glm::vec3& vec3) {
 		glUniform3f(get_uniform_location(name), vec3.x, vec3.y, vec3.z);
 	}
