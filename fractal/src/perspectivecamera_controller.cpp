@@ -28,10 +28,11 @@ namespace Fractal {
 	* 
 	* @param const glm::vec2& window_size to calcualte the aspect ratio.
 	*/
-	PerspectiveCameraController::PerspectiveCameraController(const glm::vec2& window_size) {
+	PerspectiveCameraController::PerspectiveCameraController(const glm::vec2& window_size, const glm::vec3& cam_pos) {
 		aspect_ratio = (float)window_size.x / (float)window_size.y;
 		camera = PerspectiveCamera(glm::radians(fov), aspect_ratio);
-		camera_pos = camera.GetPosition();
+		
+		camera_pos = cam_pos;
 		last_mouse_position = { window_size.x / 2, window_size.y / 2 };
 		latest_camera_position = camera_pos;
 	}

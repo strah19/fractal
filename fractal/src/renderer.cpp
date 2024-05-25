@@ -169,7 +169,7 @@ namespace Fractal {
 	}
 
 	Renderer::Renderer() {
-		default_shader.init("../shaders/default_shader.glsl");
+		default_shader.init("resources/shaders/default_shader.glsl");
 		InitRendererShader(&default_shader);
 		current_shader = &default_shader;
 

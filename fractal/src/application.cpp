@@ -34,14 +34,29 @@ namespace Fractal {
         layer->on_attach();
     }
 
+    float const Application::get_frame_time() {
+        return m_current_frame_time;
+    }
+
     void Application::run() {
+        float previous_time = Time::get_time();
+        float last_frame_time = 0.0f;
+        int interm_fps = 0;
+
         while (!m_window->destroyed()) {
-        	float time = Fractal::Time::get_time(); 
-			float delta = time - m_lastframe_time;
-			m_lastframe_time = time;
+        	float current_time = Time::get_time(); 
+            m_current_frame_time = current_time - last_frame_time;
+            last_frame_time = current_time;
+
+            interm_fps++;
+			if (current_time - previous_time > 1.0f) {
+                m_fps = interm_fps;
+                interm_fps = 0;
+                previous_time = current_time;
+            }
 
             for (Layer* layer : m_layers)
-                layer->on_update(delta);
+                layer->on_update(m_current_frame_time);
 
             m_imgui_layer->begin();
 
@@ -54,6 +69,10 @@ namespace Fractal {
             m_window->update();
             on_update();
         }
+    }
+
+    int const Application::get_fps() {
+        return m_fps;
     }
 
     void Application::on_event(Event& event) {

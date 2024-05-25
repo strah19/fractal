@@ -11,9 +11,10 @@ namespace Fractal {
 	class PerspectiveCameraController {
 	public:
 		PerspectiveCameraController() = default;
-		PerspectiveCameraController(const glm::vec2& window_size);
+		PerspectiveCameraController(const glm::vec2& window_size, const glm::vec3& cam_pos);
 		void OnEvent(Event& event);
 		void Update();
+
 		void SetFreeze(bool freeze);
 		inline void SetCameraSpeed(float speed) { this->speed = speed; }
 

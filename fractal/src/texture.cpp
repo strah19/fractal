@@ -37,7 +37,7 @@ namespace Fractal {
 			glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 			glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, m_data_format, GL_UNSIGNED_BYTE, m_data);
-			FRACTAL_LOG("Loaded texture '%s'", file_path);
+			FRACTAL_LOG_GOOD("Loaded texture '%s'", file_path);
 		}
 		else
 			FRACTAL_LOG_ERROR("Failed to load texture '%s'", file_path);

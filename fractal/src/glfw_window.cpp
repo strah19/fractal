@@ -15,7 +15,6 @@ namespace Fractal {
         m_window = glfwCreateWindow(properties.m_width, properties.m_height, properties.m_name, nullptr, nullptr);
         if (!m_window) FRACTAL_LOG_ERROR("failed to create glfw window.\n");
 
-
         glfw_window_counter++;
 
         glfwMakeContextCurrent(m_window);

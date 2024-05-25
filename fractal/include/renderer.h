@@ -166,6 +166,7 @@ namespace Fractal {
 		inline int GetFlags() const { return flags; }
 		inline void SetFlag(int flag, bool v) { if (v) flags |= flag; else flags &= ~flag; }
 		inline void SetShader(Shader* shader) { current_shader = shader; }
+		inline Shader* GetCurrentShader() { return current_shader; }
 
 		inline BatchGraphicsDevice* GetGraphicsDevice() { return gd; }
 	protected:

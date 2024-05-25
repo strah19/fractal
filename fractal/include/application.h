@@ -22,6 +22,8 @@ namespace Fractal {
         static Application& get() { return *m_instance; }
         Window* get_window() { return m_window; }
         void push_layer(Layer* layer);
+        int const get_fps();
+        float const get_frame_time();
 
         virtual void on_user_event(Event& event) { }
         virtual void on_create() { }
@@ -39,7 +41,8 @@ namespace Fractal {
 		void on_event(Event& event);  
     private:
         static Application* m_instance;
-        float m_lastframe_time = 0.0f;
+        int m_fps = 0;
+        float m_current_frame_time = 0.0f;
 		friend int ::main(int argc, char** argv);
     };
 
