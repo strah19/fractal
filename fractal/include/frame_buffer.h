@@ -9,17 +9,17 @@ namespace Fractal {
 		FrameBuffer(uint32_t width, uint32_t height);
 		FrameBuffer() = default;
 
-		void Init(uint32_t width, uint32_t height);
+		void init(uint32_t width, uint32_t height);
 		virtual ~FrameBuffer();
 
-		void Bind();
-		void UnBind();
-		uint32_t GetColorAttachment() { return color_attachment; }
-		uint32_t GetBufferStencilAttachment() const { return depth_stencil_attachment; }
+		void bind();
+		void unbind();
+		uint32_t get_color_attachment() { return m_color_attachment; }
+		uint32_t get_buffer_stencil_attachment() const { return m_depth_stencil_attachment; }
 	private:
-		uint32_t frame_buffer_id;
-		uint32_t color_attachment;
-		uint32_t depth_stencil_attachment;
+		uint32_t m_frame_buffer_id;
+		uint32_t m_color_attachment;
+		uint32_t m_depth_stencil_attachment;
 	};
 
 	class RenderBuffer {
@@ -27,9 +27,9 @@ namespace Fractal {
 		RenderBuffer(uint32_t width, uint32_t height);
 		RenderBuffer() = default;
 
-		void Init(uint32_t width, uint32_t height);
+		void init(uint32_t width, uint32_t height);
 	private:
-		uint32_t rbo;
+		uint32_t m_rbo;
 	};
 }
 

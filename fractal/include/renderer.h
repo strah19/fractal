@@ -64,7 +64,7 @@ namespace Fractal {
 		uint32_t max_vertex_count = 0;
 		uint32_t max_index_count = 0;
 
-		void Reset();
+		void reset();
 	};
 
 	struct DrawElementsCommand {
@@ -84,69 +84,63 @@ namespace Fractal {
 		GraphicsDevice(uint32_t max_vertex_count, uint32_t max_index_count);
 		virtual ~GraphicsDevice();
 
-		virtual void Init() = 0;
-		virtual void Setup() = 0;
-		virtual bool Submit(Mesh& mesh) = 0;
-		virtual void Render() = 0;
+		virtual void init() = 0;
+		virtual void setup() = 0;
+		virtual bool submit(Mesh& mesh) = 0;
+		virtual void render() = 0;
 
-		inline void SetShader(Shader** shader) { this->shader = shader; }
-		inline bool Empty() const { return (vert_base == vert_ptr); }
-		inline const DeviceStatistics get_device_stats() const { return ds; }
+		inline void set_shader(Shader** shader) { m_shader = shader; }
+		inline bool empty() const { return (m_vert_base == m_vert_ptr); }
+		inline const DeviceStatistics get_device_stats() const { return m_ds; }
 
-		inline uint32_t* IndexPtr() { return indx_ptr; }
+		inline uint32_t* index_ptr() { return m_indx_ptr; }
 	protected:
 		//Pointer to another shader that is also a pointer :)
-		Shader** shader = nullptr;
+		Shader** m_shader = nullptr;
 
-		VertexArray* vao = nullptr;
-		VertexBuffer* vbo = nullptr;
-		IndexBuffer* ibo = nullptr;
+		VertexArray* m_vao = nullptr;
+		VertexBuffer* m_vbo = nullptr;
+		IndexBuffer* m_ibo = nullptr;
 
-		V* vert_base = nullptr;
-		V* vert_ptr = nullptr;
+		V* m_vert_base = nullptr;
+		V* m_vert_ptr = nullptr;
 
-		uint32_t* indx_base = nullptr;
-		uint32_t* indx_ptr = nullptr;
+		uint32_t* m_indx_base = nullptr;
+		uint32_t* m_indx_ptr = nullptr;
 
-		DeviceStatistics ds;
+		DeviceStatistics m_ds;
 	};
 
-	class EmberVertexGraphicsDevice : public GraphicsDevice<Vertex> {
-	public:
-		EmberVertexGraphicsDevice() = default;
-		EmberVertexGraphicsDevice(uint32_t max_vertex_count, uint32_t max_index_count);
-	};
-
-	class BatchGraphicsDevice : public EmberVertexGraphicsDevice {
+	class BatchGraphicsDevice : public GraphicsDevice<Vertex> {
 	public:
 		BatchGraphicsDevice() = default;
 		BatchGraphicsDevice(uint32_t max_vertex_count, uint32_t max_index_count);
 		virtual ~BatchGraphicsDevice();
 
-		virtual void Init() override;
-		virtual void Setup() override;
-		virtual bool Submit(Mesh& mesh) override;
-		virtual void Render() override;
+		virtual void init() override;
+		virtual void setup() override;
+		virtual bool submit(Mesh& mesh) override;
+		virtual void render() override;
 
-		virtual void NextCommand();
-		virtual void MakeCommand();
+		virtual void next_command();
+		virtual void make_command();
 
-		inline uint32_t IndexOffset() const { return index_offset; }
-		float CalculateTextureIndex(uint32_t id);
+		inline uint32_t index_offset() const { return m_index_offset; }
+		float calculate_texture_index(uint32_t id);
 	private:
-		IndirectDrawBuffer* idb = nullptr;
+		IndirectDrawBuffer* m_idb = nullptr;
 
-		uint32_t texture_slot_index = 0;
-		uint32_t textures[MAX_TEXTURE_SLOTS] = { 0 };
+		uint32_t m_texture_slot_index = 0;
+		uint32_t m_textures[MAX_TEXTURE_SLOTS] = { 0 };
 
-		uint32_t index_offset = 0;
-		uint32_t cmd_vertex_base = 0;
-		uint32_t draw_command_size = 0;
-		uint32_t current_draw_command_vertex_size = 0;
-		DrawElementsCommand commands[MAX_DRAW_COMMANDS];
+		uint32_t m_index_offset = 0;
+		uint32_t m_cmd_vertex_base = 0;
+		uint32_t m_draw_command_size = 0;
+		uint32_t m_current_draw_command_vertex_size = 0;
+		DrawElementsCommand m_commands[MAX_DRAW_COMMANDS];
 
-		void AddVertex(Vertex* v);
-		void AddIndex(uint32_t index);
+		void add_vertex(Vertex* v);
+		void add_index(uint32_t index);
 	};
 
 	enum RenderFlags {
@@ -159,36 +153,36 @@ namespace Fractal {
 		RendererFrame() = default;
 		virtual ~RendererFrame();
 
-		virtual void BeginScene(Camera* camera) = 0;
-		virtual void EndScene() = 0;
-		virtual void Submit(Mesh& mesh) = 0;
+		virtual void begin_scene(Camera* camera) = 0;
+		virtual void end_scene() = 0;
+		virtual void submit(Mesh& mesh) = 0;
 
-		inline int GetFlags() const { return flags; }
-		inline void SetFlag(int flag, bool v) { if (v) flags |= flag; else flags &= ~flag; }
-		inline void SetShader(Shader* shader) { current_shader = shader; }
-		inline Shader* GetCurrentShader() { return current_shader; }
+		inline int get_flags() const { return m_flags; }
+		inline void set_flag(int flag, bool v) { if (v) m_flags |= flag; else m_flags &= ~flag; }
+		inline void set_shader(Shader* shader) { m_current_shader = shader; }
+		inline Shader* get_current_shader() { return m_current_shader; }
 
-		inline BatchGraphicsDevice* GetGraphicsDevice() { return gd; }
+		inline BatchGraphicsDevice* get_graphics_device() { return m_gd; }
 	protected:
-		Camera* camera = nullptr;
-		glm::mat4 proj_view = glm::mat4(1.0f);
-		Shader default_shader;
-		Shader* current_shader = nullptr;
-		int flags = RenderFlags::None;
-		BatchGraphicsDevice* gd;
+		Camera* m_camera = nullptr;
+		glm::mat4 m_proj_view = glm::mat4(1.0f);
+		Shader m_default_shader;
+		Shader* m_current_shader = nullptr;
+		int m_flags = RenderFlags::None;
+		BatchGraphicsDevice* m_gd;
 	};
 
 	class Renderer : public RendererFrame {
 	public:
 		Renderer();
 
-		virtual void BeginScene(Camera* camera) override;
-		virtual void EndScene() override;
-		virtual void Submit(Mesh& mesh) override;
+		virtual void begin_scene(Camera* camera) override;
+		virtual void end_scene() override;
+		virtual void submit(Mesh& mesh) override;
 
-		void InitRendererShader(Shader* shader);
+		void init_renderer_shader(Shader* shader);
 	private:
-		ShaderStorageBuffer* ssbo;
+		ShaderStorageBuffer* m_ssbo;
 	};
 }
 

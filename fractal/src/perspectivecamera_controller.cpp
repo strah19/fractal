@@ -23,49 +23,41 @@ namespace Fractal {
 	constexpr float SMALLEST_ZOOM = 1.0f;
 	constexpr float HIGHEST_ZOOM = 60.0f;
 
-	/**
-	* Perspective Camera Controller constructor.
-	* 
-	* @param const glm::vec2& window_size to calcualte the aspect ratio.
-	*/
 	PerspectiveCameraController::PerspectiveCameraController(const glm::vec2& window_size, const glm::vec3& cam_pos) {
-		aspect_ratio = (float)window_size.x / (float)window_size.y;
-		camera = PerspectiveCamera(glm::radians(fov), aspect_ratio);
+		m_aspect_ratio = (float)window_size.x / (float)window_size.y;
+		m_camera = PerspectiveCamera(glm::radians(m_fov), m_aspect_ratio);
 		
-		camera_pos = cam_pos;
-		last_mouse_position = { window_size.x / 2, window_size.y / 2 };
-		latest_camera_position = camera_pos;
+		m_camera_pos = cam_pos;
+		m_last_mouse_position = { window_size.x / 2, window_size.y / 2 };
+		m_latest_camera_position = m_camera_pos;
 	}
 
-	/**
-	* Updates the controllers position and pitch of the camera.
-	*/
-	void PerspectiveCameraController::Update() {
-		if (!freeze) {
-			if (latest_camera_position != camera_pos)
-				camera.SetPosition(camera_pos);
-			camera.SetMatrixView(glm::lookAt(camera_pos, camera_pos + camera_front, camera_up));
+	void PerspectiveCameraController::update() {
+		if (!m_freeze) {
+			if (m_latest_camera_position != m_camera_pos)
+				m_camera.set_position(m_camera_pos);
+			m_camera.set_matrix_view(glm::lookAt(m_camera_pos, m_camera_pos + m_camera_front, m_camera_up));
 
-			latest_camera_position = camera_pos;
+			m_latest_camera_position = m_camera_pos;
 
 				if (KeyboardEvents::GetKeyPress(GLFW_KEY_D))
-				camera_pos += glm::normalize(glm::cross(camera_front, camera_up)) * speed;
+					m_camera_pos += glm::normalize(glm::cross(m_camera_front, m_camera_up)) * m_speed;
 				if (KeyboardEvents::GetKeyPress(GLFW_KEY_A))
-					camera_pos -= glm::normalize(glm::cross(camera_front, camera_up)) * speed;
+					m_camera_pos -= glm::normalize(glm::cross(m_camera_front, m_camera_up)) * m_speed;
 				if (KeyboardEvents::GetKeyPress(GLFW_KEY_W))
-					camera_pos += speed * camera_front;
+					m_camera_pos += m_speed * m_camera_front;
 				if (KeyboardEvents::GetKeyPress(GLFW_KEY_S))
-					camera_pos -= speed * camera_front;
+					m_camera_pos -= m_speed * m_camera_front;
 
-			float xoffset = MousePositionEvent::GetMousePosition().x - last_mouse_position.x;
-			float yoffset = last_mouse_position.y - MousePositionEvent::GetMousePosition().y;
-			last_mouse_position = { MousePositionEvent::GetMousePosition().x, MousePositionEvent::GetMousePosition().y };
+			float xoffset = MousePositionEvent::GetMousePosition().x - m_last_mouse_position.x;
+			float yoffset = m_last_mouse_position.y - MousePositionEvent::GetMousePosition().y;
+			m_last_mouse_position = { MousePositionEvent::GetMousePosition().x, MousePositionEvent::GetMousePosition().y };
 
 			const float sensitivity = 0.1f;
 			xoffset *= sensitivity;
 			yoffset *= sensitivity;
 
-			yaw += xoffset;
+			m_yaw += xoffset;
 			pitch += yoffset;
 
 			if (pitch > 89.0f)
@@ -74,80 +66,55 @@ namespace Fractal {
 				pitch = -89.0f;
 
 			glm::vec3 direction;
-			direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+			direction.x = cos(glm::radians(m_yaw)) * cos(glm::radians(pitch));
 			direction.y = sin(glm::radians(pitch));
-			direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-			camera_front = glm::normalize(direction);
+			direction.z = sin(glm::radians(m_yaw)) * cos(glm::radians(pitch));
+			m_camera_front = glm::normalize(direction);
 		}
 	}
 
-	/**
-	* Takes the current Ember event and updates keyboard and mouse events.
-	* 
-	* @param Event& the current Ember event.
-	*/
-	void PerspectiveCameraController::OnEvent(Event& event) {
+	void PerspectiveCameraController::on_event(Event& event) {
 		EventDispatcher dispatcher(&event);
 
-		dispatcher.dispatch<KeyboardEvents>(BIND_EVENT(KeyboardHandler));
-		dispatcher.dispatch<MouseWheelEvent>(BIND_EVENT(MouseWheelHandler));
-		dispatcher.dispatch<ResizeEvent>(BIND_EVENT(WindowResizeHandler));
+		dispatcher.dispatch<KeyboardEvents>(BIND_EVENT(keyboard_handler));
+		dispatcher.dispatch<MouseWheelEvent>(BIND_EVENT(mouse_wheel_handler));
+		dispatcher.dispatch<ResizeEvent>(BIND_EVENT(window_resize_handler));
 	}
 
-	/**
-	* The mousewheel event handler of the controller.
-	* 
-	* @param MouseWheelEvent& the event mousewheel.
-	*/
-	void PerspectiveCameraController::MouseWheelHandler(MouseWheelEvent& mousewheel) {
-		fov -= mousewheel.m_yoffset;
-		if (fov < SMALLEST_ZOOM)
-			fov = SMALLEST_ZOOM;
-		if (fov > HIGHEST_ZOOM)
-			fov = HIGHEST_ZOOM;
-		camera.SetProjection(glm::radians(fov), aspect_ratio);
+	void PerspectiveCameraController::mouse_wheel_handler(MouseWheelEvent& mousewheel) {
+		m_fov -= mousewheel.m_yoffset;
+		if (m_fov < SMALLEST_ZOOM)
+			m_fov = SMALLEST_ZOOM;
+		if (m_fov > HIGHEST_ZOOM)
+			m_fov = HIGHEST_ZOOM;
+		m_camera.set_projection(glm::radians(m_fov), m_aspect_ratio);
 	}
 
-	/**
-	* The Resize event handler.
-	* 
-	* @param ResizEvent& the resize event.
-	*/
-	void PerspectiveCameraController::WindowResizeHandler(ResizeEvent& resize) {
-		aspect_ratio = (float)resize.m_width / (float)resize.m_height;
-		camera.SetProjection(glm::radians(fov), aspect_ratio);
+	void PerspectiveCameraController::window_resize_handler(ResizeEvent& resize) {
+		m_aspect_ratio = (float)resize.m_width / (float)resize.m_height;
+		m_camera.set_projection(glm::radians(m_fov), m_aspect_ratio);
 	}
 
-	/**
-	* Will freeze the movement of the camera.
-	* 
-	* @param bool state of the freeze.
-	*/
-	void PerspectiveCameraController::SetFreeze(bool freeze) {
-		this->freeze = freeze;
+	void PerspectiveCameraController::set_freeze(bool freeze) {
+		m_freeze = freeze;
 
-		if (this->freeze)
+		if (m_freeze)
 			cursor_enable();
 		else
 			cursor_disable();
 	}
 
-	/**
-	* The keyboard event handler.
-	* 
-	* @param KeyboardEvents& keybaord events.
-	*/
-	void PerspectiveCameraController::KeyboardHandler(KeyboardEvents& keyboard) {
-		if (KeyboardEvents::GetKeyPress(GLFW_KEY_M) && !freeze) {
-			in_camera_mode = !in_camera_mode;
-			last_mouse_position = { MousePositionEvent::GetMousePosition().x, MousePositionEvent::GetMousePosition().y };
-			if (!in_camera_mode)
+	void PerspectiveCameraController::keyboard_handler(KeyboardEvents& keyboard) {
+		if (KeyboardEvents::GetKeyPress(GLFW_KEY_M) && !m_freeze) {
+			m_in_camera_mode = !m_in_camera_mode;
+			m_last_mouse_position = { MousePositionEvent::GetMousePosition().x, MousePositionEvent::GetMousePosition().y };
+			if (!m_in_camera_mode)
 				cursor_enable();
 			else
 				cursor_disable();
 		}
 		if (KeyboardEvents::GetKeyPress(GLFW_KEY_F)) {
-			SetFreeze(!this->freeze);
+			set_freeze(!m_freeze);
 		}
 	}
 }

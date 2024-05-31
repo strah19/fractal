@@ -1,3 +1,21 @@
+/**
+ * @file application.cpp
+ * @author strah19
+ * @date May 29 2024
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the MIT License as
+ * published by the Free Software Foundation.
+ *
+ * @section DESCRIPTION
+ *
+ * This file contains the main program application code controlling
+ * application setup, run, and clean up.
+ */
+
 #include "application.h"
 #include "log.h"
 #include "renderer_commands.h"
@@ -94,4 +112,4 @@ namespace Fractal {
 
         RendererCommands::set_viewport(0, 0, event.m_width, event.m_height);
 	}
-} // namespace Fractal
+} 

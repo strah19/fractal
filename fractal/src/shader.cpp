@@ -12,7 +12,7 @@
  *
  * @section DESCRIPTION
  *
- * This file contains the ortho camera controller (2d camera).
+ * This file contains the shader code.
  */
 
 #include "shader.h"

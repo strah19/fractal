@@ -1,3 +1,20 @@
+/**
+ * @file utility.cpp
+ * @author strah19
+ * @date May 30 2024
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the MIT License as
+ * published by the Free Software Foundation.
+ *
+ * @section DESCRIPTION
+ *
+ * This file contains utility functions for general use.
+ */
+
 #include "utility.h"
 #include "config.h"
 
@@ -28,4 +45,4 @@ namespace Fractal {
     std::string get_name_of_path(const std::string& path) {
         return path.substr(path.find_last_of("/\\") + 1);;
     }
-} // namespace Fractal
+} 

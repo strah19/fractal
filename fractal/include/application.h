@@ -47,6 +47,6 @@ namespace Fractal {
     };
 
     static Application* create_application();
-} // namespace Fractal
+} 
 
 #endif // !APPLICATION_H

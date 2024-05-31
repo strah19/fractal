@@ -7,24 +7,24 @@
 namespace Fractal {
 	class Camera {
 	public:
-		inline glm::mat4 GetProjection() const { return projection_matrix; }
-		inline glm::mat4 GetView() const { return view_matrix; }
-		inline float GetRotation() const { return rotation; }
-		inline glm::vec3 GetPosition() const { return position; }
+		inline glm::mat4 get_projection() const { return m_projection_matrix; }
+		inline glm::mat4 get_view() const { return m_view_matrix; }
+		inline float get_rotation() const { return m_rotation; }
+		inline glm::vec3 get_position() const { return m_position; }
 
-		inline void SetMatrixProjection(const glm::mat4& projection) { projection_matrix = projection; }
-		inline void SetMatrixView(const glm::mat4& view) { view_matrix = view; }
-		inline void SetRotation(float r) { rotation = r; CalculateView(); }
-		inline void SetPosition(const glm::vec3& pos) { position = pos; CalculateView(); }
+		inline void set_matrix_projection(const glm::mat4& projection) { m_projection_matrix = projection; }
+		inline void set_matrix_view(const glm::mat4& view) { m_view_matrix = view; }
+		inline void set_rotation(float r) { m_rotation = r; calculate_view(); }
+		inline void set_position(const glm::vec3& pos) { m_position = pos; calculate_view(); }
 	protected:
-		void CalculateView();
+		void calculate_view();
 	protected:
-		glm::vec3 position = { 0, 0, 3 };
+		glm::vec3 m_position = { 0, 0, 3 };
 
-		glm::mat4 projection_matrix = glm::mat4(1.0f);
-		glm::mat4 view_matrix = glm::mat4(1.0f);
+		glm::mat4 m_projection_matrix = glm::mat4(1.0f);
+		glm::mat4 m_view_matrix = glm::mat4(1.0f);
 
-		float rotation = 0.0f;
+		float m_rotation = 0.0f;
 	};
 }
 

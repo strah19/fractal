@@ -18,24 +18,12 @@
 #include "perspectivecamera.h"
 
 namespace Fractal {
-	/**
-	* Perspective Camera Contructor.
-	* 
-	* @param float field of view.
-	* @param float aspect ratio of the screen.
-	*/
 	PerspectiveCamera::PerspectiveCamera(float fov, float aspect_ratio) {
-		SetProjection(fov, aspect_ratio);
+		set_projection(fov, aspect_ratio);
 	}
 
-	/**
-	* Updates the camera.
-	* 
-	* @param float field of view.
-	* @param float aspect ratio of the screen.
-	*/
-	void PerspectiveCamera::SetProjection(float fov, float aspect_ratio) {
-		CalculateView();
-		projection_matrix = glm::perspective(fov, aspect_ratio, 0.1f, 100.0f);
+	void PerspectiveCamera::set_projection(float fov, float aspect_ratio) {
+		calculate_view();
+		m_projection_matrix = glm::perspective(fov, aspect_ratio, 0.1f, 100.0f);
 	}
 }

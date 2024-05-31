@@ -1,3 +1,20 @@
+/**
+ * @file renderer_commands.cpp
+ * @author strah19
+ * @date May 30 2024
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the MIT License as
+ * published by the Free Software Foundation.
+ *
+ * @section DESCRIPTION
+ *
+ * This file contains code that interfaces with OpenGL.
+ */
+
 #include "renderer_commands.h"
 #include <glad/glad.h>
 
@@ -23,27 +40,27 @@ namespace Fractal {
         glViewport(x, y, w, h);
     }
 
-	void RendererCommands::DrawVertexArray(VertexArray* vertex_array) {
-		glDrawElements(DecodeType(), vertex_array->GetIndexBufferSize(), GL_UNSIGNED_INT, 0);
+	void RendererCommands::draw_vertex_array(VertexArray* vertex_array) {
+		glDrawElements(decode_type(), vertex_array->get_index_buffer_size(), GL_UNSIGNED_INT, 0);
 	}
 
-	void RendererCommands::DrawVertexArrayInstanced(VertexArray* vertex_array, uint32_t instance_count) {
-		glDrawArraysInstanced(DecodeType(), 0, vertex_array->GetIndexBufferSize(), instance_count);
+	void RendererCommands::draw_vertex_array_instanced(VertexArray* vertex_array, uint32_t instance_count) {
+		glDrawArraysInstanced(decode_type(), 0, vertex_array->get_index_buffer_size(), instance_count);
 	}
 
-	void RendererCommands::DrawMultiIndirect(const void* indirect, uint32_t count, uint32_t stride) {
-		glMultiDrawElementsIndirect(DecodeType(), GL_UNSIGNED_INT, indirect, count, stride);
+	void RendererCommands::draw_multi_indirect(const void* indirect, uint32_t count, uint32_t stride) {
+		glMultiDrawElementsIndirect(decode_type(), GL_UNSIGNED_INT, indirect, count, stride);
 	}
 
-	void RendererCommands::PolygonMode(uint32_t face, uint32_t mode) {
+	void RendererCommands::polygon_mode(uint32_t face, uint32_t mode) {
 		glPolygonMode(face, mode);
 	}
 
-	void RendererCommands::SetPrimType(int prim_type) {
+	void RendererCommands::set_prim_type(int prim_type) {
 		prim = prim_type;
 	}
 
-	int RendererCommands::DecodeType() {
+	int RendererCommands::decode_type() {
 		switch (prim) {
 		case TRIANGLE: return GL_TRIANGLES;
 		case LINE: return GL_LINES;
@@ -52,7 +69,7 @@ namespace Fractal {
 		}
 	}
 
-	void RendererCommands::LineWidth(float width) {
+	void RendererCommands::line_width(float width) {
 		glLineWidth(width);
 	}
 } 

@@ -15,14 +15,14 @@ public:
 		camera = Fractal::PerspectiveCameraController({ WINDOW_WIDTH, WINDOW_HEIGHT }, cam_p);
 
         renderer = new Fractal::Renderer;
-		Fractal::SetRenderer(renderer);
+		Fractal::set_renderer(renderer);
 
         texture = new Fractal::Texture();
         texture->initialize("resources/texture.png");
     }
 
     void on_update() {
-        camera.Update();
+        camera.update();
 
         if (p.y > 0) {
             p.x = i_p.x + (i_v.x * t);
@@ -38,25 +38,25 @@ public:
 
         Fractal::RendererCommands::clear(background_color.r, background_color.g, background_color.b, background_color.a);
 
-		renderer->BeginScene(&camera.GetCamera());
+		renderer->begin_scene(&camera.get_camera());
 		
         texture->bind();
         render_plane();
 
 
-		renderer->EndScene();
+		renderer->end_scene();
         t += get_frame_time();
         traj_timer = t;
     }
 
     void render_plane() {
-        Fractal::Cube::DrawCube({ 0, 0, 0 }, { WINDOW_WIDTH, line_thickness, line_thickness }, { 0, 0, 0, 1 });
-        Fractal::Cube::DrawCube({ 0, 0, 0 }, { line_thickness, WINDOW_HEIGHT, line_thickness }, { 0, 0, 0, 1 });
-        Fractal::Cube::DrawCube({ 0, 0, 0 }, { line_thickness, line_thickness, WINDOW_HEIGHT }, { 0, 0, 0, 1 });
+        Fractal::Cube::draw_cube({ 0, 0, 0 }, { WINDOW_WIDTH, line_thickness, line_thickness }, { 0, 0, 0, 1 });
+        Fractal::Cube::draw_cube({ 0, 0, 0 }, { line_thickness, WINDOW_HEIGHT, line_thickness }, { 0, 0, 0, 1 });
+        Fractal::Cube::draw_cube({ 0, 0, 0 }, { line_thickness, line_thickness, WINDOW_HEIGHT }, { 0, 0, 0, 1 });
 
-        Fractal::Quad::DrawQuad(p, { 1, 1 }, texture->get_texture_id());
+        Fractal::Quad::draw_quad(p, { 1, 1 }, texture->get_texture_id());
         for (int i = 0; i < traj_index; i++) {
-            Fractal::Cube::DrawCube(trajectory_points[i], { .03, .03, .03 }, {1, 0, 0, 1});
+            Fractal::Cube::draw_cube(trajectory_points[i], { .03, .03, .03 }, {1, 0, 0, 1});
         }
     }
 
@@ -67,7 +67,7 @@ public:
             ImGui::SliderFloat("Line Thickness", &line_thickness, 0.0f, 1.0f);
             ImGui::ColorPicker4("Background Color", &background_color.x);
             ImGui::Separator();
-            glm::vec3 position = camera.GetCamera().GetPosition();
+            glm::vec3 position = camera.get_camera().get_position();
             ImGui::Text("Camera Position: %f %f %f", position.x, position.y, position.z);
 
             ImGui::Separator();
@@ -80,7 +80,7 @@ public:
     }
 
     void ds_gui() {
-        Fractal::DeviceStatistics ds = renderer->GetGraphicsDevice()->get_device_stats();
+        Fractal::DeviceStatistics ds = renderer->get_graphics_device()->get_device_stats();
 
         ImGui::Begin("Device Statistics");
         ImGui::Separator();
@@ -102,7 +102,7 @@ public:
     }
 
     void on_user_event(Fractal::Event& event) {
-        camera.OnEvent(event);
+        camera.on_event(event);
         Fractal::EventDispatcher dispatch(&event);
         dispatch.dispatch<Fractal::KeyboardEvents>(BIND_EVENT(keyboard_event));
     }

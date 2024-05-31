@@ -14,25 +14,25 @@ namespace Fractal {
 		VertexArray();
 		virtual ~VertexArray();
 
-		void Bind();
-		void UnBind();
+		void bind();
+		void unbind();
 
-		std::vector<std::shared_ptr<VertexBuffer>> GetVertexBuffers() { return vertex_buffers; };
-		uint32_t GetIndexBufferSize() const { return index_size; }
+		std::vector<std::shared_ptr<VertexBuffer>> get_vertex_buffer() { return m_vertex_buffers; };
+		uint32_t get_index_buffer_size() const { return m_index_size; }
 
-		void AddVertexBuffer(VertexBuffer* vertex_buf, VertexBufferFormat format);
-		void SetIndexBufferSize(uint32_t index_buf) { index_size = index_buf; }
+		void add_vertex_buffer(VertexBuffer* vertex_buf, VertexBufferFormat format);
+		void set_index_buffer_size(uint32_t index_buf) { m_index_size = index_buf; }
 
-		void EnableVertexAttrib(uint32_t index);
-		void SetArrayForInstancing(std::shared_ptr<VertexBuffer>& vertex_buf, uint32_t offset_sizes[], uint32_t stride_sizes[]);
+		void enable_vertex_attrib(uint32_t index);
+		void set_array_for_instancing(std::shared_ptr<VertexBuffer>& vertex_buf, uint32_t offset_sizes[], uint32_t stride_sizes[]);
 
-		uint32_t GetId() const { return vertex_array_buffer_id; }
+		uint32_t get_id() const { return m_vertex_array_buffer_id; }
 	private:
-		uint32_t vertex_array_buffer_id;
+		uint32_t m_vertex_array_buffer_id;
 
-		std::vector<std::shared_ptr<VertexBuffer>> vertex_buffers;
+		std::vector<std::shared_ptr<VertexBuffer>> m_vertex_buffers;
 
-		uint32_t index_size = 0;
+		uint32_t m_index_size = 0;
 	};
 }
 

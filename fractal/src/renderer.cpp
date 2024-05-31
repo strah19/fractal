@@ -1,3 +1,20 @@
+/**
+ * @file renderer.cpp
+ * @author strah19
+ * @date May 30 2024
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the MIT License as
+ * published by the Free Software Foundation.
+ *
+ * @section DESCRIPTION
+ *
+ * This file contains code the main rendering code.
+ */
+
 #include "renderer.h"
 #include "log.h"
 #include "renderer_commands.h"
@@ -6,7 +23,7 @@
 #include <cstring>
 
 namespace Fractal {
-	void DeviceStatistics::Reset() {
+	void DeviceStatistics::reset() {
 		num_of_indices = 0;
 		num_of_vertices = 0;
 		draw_count = 0;
@@ -14,148 +31,146 @@ namespace Fractal {
 
 	template <typename V>
 	GraphicsDevice<V>::GraphicsDevice(uint32_t max_vertex_count, uint32_t max_index_count) {
-		vbo = new VertexBuffer(sizeof(V) * max_vertex_count);
-		vao = new VertexArray();
-		ds.max_vertex_count = max_vertex_count;
+		m_vbo = new VertexBuffer(sizeof(V) * max_vertex_count);
+		m_vao = new VertexArray();
+		m_ds.max_vertex_count = max_vertex_count;
 
-		vert_base = new V[max_vertex_count];
-		indx_base = new uint32_t[max_vertex_count];
+		m_vert_base = new V[max_vertex_count];
+		m_indx_base = new uint32_t[max_vertex_count];
 
-		ibo = new IndexBuffer(sizeof(uint32_t) * max_index_count);
-		ds.max_index_count = max_index_count;
+		m_ibo = new IndexBuffer(sizeof(uint32_t) * max_index_count);
+		m_ds.max_index_count = max_index_count;
 
-		vao->SetIndexBufferSize(ibo->GetCount());
+		m_vao->set_index_buffer_size(m_ibo->get_count());
 	}
 
 	template <typename V>
 	GraphicsDevice<V>::~GraphicsDevice() {
-		delete vao;
-		delete vbo;
-		delete ibo;
+		delete m_vao;
+		delete m_vbo;
+		delete m_ibo;
 
-		delete[] vert_base;
-		delete[] indx_base;
+		delete[] m_vert_base;
+		delete[] m_indx_base;
 
-		shader = nullptr;
+		m_shader = nullptr;
 	}
 
-	EmberVertexGraphicsDevice::EmberVertexGraphicsDevice(uint32_t max_vertex_count, uint32_t max_index_count) : GraphicsDevice(max_vertex_count, max_index_count) { }
-
-	BatchGraphicsDevice::BatchGraphicsDevice(uint32_t max_vertex_count, uint32_t max_index_count) : EmberVertexGraphicsDevice(max_vertex_count, max_index_count) {
+	BatchGraphicsDevice::BatchGraphicsDevice(uint32_t max_vertex_count, uint32_t max_index_count) : GraphicsDevice(max_vertex_count, max_index_count) {
 		VertexBufferLayout layout;
-		layout.AddToBuffer(VertexBufferElement(3, false, VertexShaderType::Float));
-		layout.AddToBuffer(VertexBufferElement(4, false, VertexShaderType::Float));
-		layout.AddToBuffer(VertexBufferElement(2, false, VertexShaderType::Float));
-		layout.AddToBuffer(VertexBufferElement(2, false, VertexShaderType::Float));
+		layout.add_to_buffer(VertexBufferElement(3, false, VertexShaderType::Float));
+		layout.add_to_buffer(VertexBufferElement(4, false, VertexShaderType::Float));
+		layout.add_to_buffer(VertexBufferElement(2, false, VertexShaderType::Float));
+		layout.add_to_buffer(VertexBufferElement(2, false, VertexShaderType::Float));
 
-		vbo->SetLayout(layout);
-		vao->AddVertexBuffer(vbo, VertexBufferFormat::VNCVNCVNC);
+		m_vbo->set_layout(layout);
+		m_vao->add_vertex_buffer(m_vbo, VertexBufferFormat::VNCVNCVNC);
 	}
 
-	void BatchGraphicsDevice::Init() {
-		idb = new IndirectDrawBuffer(sizeof(commands));
+	void BatchGraphicsDevice::init() {
+		m_idb = new IndirectDrawBuffer(sizeof(m_commands));
 	}
 
 	BatchGraphicsDevice::~BatchGraphicsDevice() {
-		delete idb;
+		delete m_idb;
 	}
 
-	void BatchGraphicsDevice::Setup() {
-		memset(textures, NULL, sizeof(uint32_t) * MAX_TEXTURE_SLOTS);
-		texture_slot_index = 0;
-		ds.Reset();
+	void BatchGraphicsDevice::setup() {
+		memset(m_textures, NULL, sizeof(uint32_t) * MAX_TEXTURE_SLOTS);
+		m_texture_slot_index = 0;
+		m_ds.reset();
 
-		index_offset = 0;
-		cmd_vertex_base = 0;
-		current_draw_command_vertex_size = 0;
+		m_index_offset = 0;
+		m_cmd_vertex_base = 0;
+		m_current_draw_command_vertex_size = 0;
 
-		vert_ptr = vert_base;
-		indx_ptr = indx_base;
+		m_vert_ptr = m_vert_base;
+		m_indx_ptr = m_indx_base;
 	}
 
-	void BatchGraphicsDevice::AddVertex(Vertex* v) {
-		*vert_ptr = *v;
-		vert_ptr++;
-		ds.num_of_vertices++;
+	void BatchGraphicsDevice::add_vertex(Vertex* v) {
+		*m_vert_ptr = *v;
+		m_vert_ptr++;
+		m_ds.num_of_vertices++;
 	}
 
-	void BatchGraphicsDevice::AddIndex(uint32_t index) {
-		*indx_ptr = index;
-		indx_ptr++;
-		ds.num_of_indices++;
+	void BatchGraphicsDevice::add_index(uint32_t index) {
+		*m_indx_ptr = index;
+		m_indx_ptr++;
+		m_ds.num_of_indices++;
 	}
 
-	bool BatchGraphicsDevice::Submit(Mesh& mesh) {
-		if (ds.num_of_vertices + mesh.vertices.size() > ds.max_vertex_count || ds.num_of_indices + mesh.indices.size() > ds.max_index_count)
+	bool BatchGraphicsDevice::submit(Mesh& mesh) {
+		if (m_ds.num_of_vertices + mesh.vertices.size() > m_ds.max_vertex_count || m_ds.num_of_indices + mesh.indices.size() > m_ds.max_index_count)
 			return false;
 
 		for (auto& vertex : mesh.vertices) {
-			if (ds.num_of_vertices >= ds.max_vertex_count)
+			if (m_ds.num_of_vertices >= m_ds.max_vertex_count)
 				break;
-			AddVertex(&vertex);
-			index_offset++;
+			add_vertex(&vertex);
+			m_index_offset++;
 		}
 
 		for (auto& index : mesh.indices) {
-			if (ds.num_of_indices >= ds.max_index_count)
+			if (m_ds.num_of_indices >= m_ds.max_index_count)
 				break;
-			AddIndex(index);
-			current_draw_command_vertex_size++;
+			add_index(index);
+			m_current_draw_command_vertex_size++;
 		}
 
 		return true;
 	}
 
-	void BatchGraphicsDevice::Render() {
-		vao->Bind();
-		ibo->Bind();
-		vbo->Bind();
-		(*shader)->bind();
+	void BatchGraphicsDevice::render() {
+		m_vao->bind();
+		m_ibo->bind();
+		m_vbo->bind();
+		(*m_shader)->bind();
 
-		idb->Bind();
-		idb->SetData(commands, sizeof(commands), 0);
+		m_idb->bind();
+		m_idb->set_data(m_commands, sizeof(m_commands), 0);
 
-		for (uint32_t i = 0; i < texture_slot_index; i++)
-			if (textures[i])
-				glBindTextureUnit(i, textures[i]);
-		uint32_t vertex_buf_size = (uint32_t)((uint8_t*)vert_ptr - (uint8_t*)vert_base);
-		uint32_t index_buf_size = (uint32_t)((uint8_t*)indx_ptr - (uint8_t*)indx_base);
+		for (uint32_t i = 0; i < m_texture_slot_index; i++)
+			if (m_textures[i])
+				glBindTextureUnit(i, m_textures[i]);
+		uint32_t vertex_buf_size = (uint32_t)((uint8_t*)m_vert_ptr - (uint8_t*)m_vert_base);
+		uint32_t index_buf_size = (uint32_t)((uint8_t*)m_indx_ptr - (uint8_t*)m_indx_base);
 
-		vbo->SetData(vert_base, vertex_buf_size);
-		ibo->SetData(indx_base, index_buf_size);
+		m_vbo->set_data(m_vert_base, vertex_buf_size);
+		m_ibo->set_data(m_indx_base, index_buf_size);
 
-		vao->SetIndexBufferSize(ibo->GetCount());
+		m_vao->set_index_buffer_size(m_ibo->get_count());
 
-		RendererCommands::DrawMultiIndirect(nullptr, ds.draw_count + 1, 0);
+		RendererCommands::draw_multi_indirect(nullptr, m_ds.draw_count + 1, 0);
 	}
 
-	void BatchGraphicsDevice::NextCommand() {
-		ds.draw_count++;
-		cmd_vertex_base += ds.num_of_vertices;
-		current_draw_command_vertex_size = 0;
+	void BatchGraphicsDevice::next_command() {
+		m_ds.draw_count++;
+		m_cmd_vertex_base += m_ds.num_of_vertices;
+		m_current_draw_command_vertex_size = 0;
 	}
 
-	void BatchGraphicsDevice::MakeCommand() {
-		commands[ds.draw_count].vertex_count = current_draw_command_vertex_size;
-		commands[ds.draw_count].instance_count = 1;
-		commands[ds.draw_count].first_index = 0;
-		commands[ds.draw_count].base_vertex = cmd_vertex_base;
-		commands[ds.draw_count].base_instance = ds.draw_count;
+	void BatchGraphicsDevice::make_command() {
+		m_commands[m_ds.draw_count].vertex_count = m_current_draw_command_vertex_size;
+		m_commands[m_ds.draw_count].instance_count = 1;
+		m_commands[m_ds.draw_count].first_index = 0;
+		m_commands[m_ds.draw_count].base_vertex = m_cmd_vertex_base;
+		m_commands[m_ds.draw_count].base_instance = m_ds.draw_count;
 	}
 
-	float BatchGraphicsDevice::CalculateTextureIndex(uint32_t id) {
+	float BatchGraphicsDevice::calculate_texture_index(uint32_t id) {
 		float texture_id = -1.0f;
 
-		for (uint32_t i = 0; i < texture_slot_index; i++)
-			if (textures[i] == id)
+		for (uint32_t i = 0; i < m_texture_slot_index; i++)
+			if (m_textures[i] == id)
 				texture_id = (float)i;
 
 		if (texture_id == -1.0f) {
-			textures[texture_slot_index] = id;
-			texture_id = (float)texture_slot_index;
-			texture_slot_index++;
+			m_textures[m_texture_slot_index] = id;
+			texture_id = (float)m_texture_slot_index;
+			m_texture_slot_index++;
 
-			if (texture_slot_index == MAX_TEXTURE_SLOTS) {
+			if (m_texture_slot_index == MAX_TEXTURE_SLOTS) {
 				FRACTAL_LOG_ERROR("Too many textures in one batch. Create a new draw call!");
 				return -1.0f;
 			}
@@ -165,20 +180,20 @@ namespace Fractal {
 	}
 
 	RendererFrame::~RendererFrame() {
-		camera = nullptr;
+		m_camera = nullptr;
 	}
 
 	Renderer::Renderer() {
-		default_shader.init("resources/shaders/default_shader.glsl");
-		InitRendererShader(&default_shader);
-		current_shader = &default_shader;
+		m_default_shader.init("resources/shaders/default_shader.glsl");
+		init_renderer_shader(&m_default_shader);
+		m_current_shader = &m_default_shader;
 
-		gd = new BatchGraphicsDevice(MAX_VERTEX_COUNT, MAX_INDEX_COUNT);
-		gd->Init();
-		ssbo = new ShaderStorageBuffer(sizeof(glm::mat4), 0);
+		m_gd = new BatchGraphicsDevice(MAX_VERTEX_COUNT, MAX_INDEX_COUNT);
+		m_gd->init();
+		m_ssbo = new ShaderStorageBuffer(sizeof(glm::mat4), 0);
 	}
 
-	void Renderer::InitRendererShader(Shader* shader) {
+	void Renderer::init_renderer_shader(Shader* shader) {
 		shader->bind();
 		int sampler[MAX_TEXTURE_SLOTS];
 		for (int i = 0; i < MAX_TEXTURE_SLOTS; i++)
@@ -187,29 +202,29 @@ namespace Fractal {
 		shader->unbind();
 	}
 
-	void Renderer::BeginScene(Camera* camera) {
-		this->camera = camera;
-		proj_view = camera->GetProjection() * camera->GetView();
-		current_shader = &default_shader;
-		gd->Setup();
+	void Renderer::begin_scene(Camera* camera) {
+		m_camera = camera;
+		m_proj_view = camera->get_projection() * camera->get_view();
+		m_current_shader = &m_default_shader;
+		m_gd->setup();
 	}
 
-	void Renderer::EndScene() {
-		gd->SetShader(&current_shader);
+	void Renderer::end_scene() {
+		m_gd->set_shader(&m_current_shader);
 
-		gd->MakeCommand();
-		gd->NextCommand();
-		ssbo->Bind();
-		ssbo->SetData((void*)&proj_view, sizeof(glm::mat4), 0);
-		ssbo->BindToBindPoint();
-		gd->Render();
+		m_gd->make_command();
+		m_gd->next_command();
+		m_ssbo->bind();
+		m_ssbo->set_data((void*)&m_proj_view, sizeof(glm::mat4), 0);
+		m_ssbo->bind_to_bind_point();
+		m_gd->render();
 	}
 
-	void Renderer::Submit(Mesh& mesh) {
-		if (!gd->Submit(mesh)) {
-			EndScene();
-			gd->Setup();
-			if (!gd->Submit(mesh))
+	void Renderer::submit(Mesh& mesh) {
+		if (!m_gd->submit(mesh)) {
+			end_scene();
+			m_gd->setup();
+			if (!m_gd->submit(mesh))
 				FRACTAL_LOG_ERROR("Singular mesh is too big. Split it up!");
 		}
 	}

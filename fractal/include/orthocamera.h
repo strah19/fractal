@@ -9,14 +9,14 @@ namespace Fractal {
 		OrthoCamera(float left, float right, float bottom, float top);
 		OrthoCamera() = default;
 
-		void SetProjection(float left, float right, float bottom, float top);
+		void set_projection(float left, float right, float bottom, float top);
 
-		inline float Left() const { return left; }
-		inline float Right() const { return right; }
-		inline float Bottom() const { return bottom; }
-		inline float Top() const { return top; }
+		inline float left() const { return m_left; }
+		inline float right() const { return m_right; }
+		inline float bottom() const { return m_bottom; }
+		inline float top() const { return m_top; }
 	private:
-		float left = 0, right = 0, bottom = 0, top = 0;
+		float m_left = 0, m_right = 0, m_bottom = 0, m_top = 0;
 	};
 }
 

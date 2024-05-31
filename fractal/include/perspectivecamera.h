@@ -9,7 +9,7 @@ namespace Fractal {
 		PerspectiveCamera(float fov, float aspect_ratio);
 		PerspectiveCamera() = default;
 
-		void SetProjection(float fov, float aspect_ratio);
+		void set_projection(float fov, float aspect_ratio);
 	};
 }
 

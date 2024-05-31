@@ -1,3 +1,20 @@
+/**
+ * @file layer.cpp
+ * @author strah19
+ * @date May 30 2024
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the MIT License as
+ * published by the Free Software Foundation.
+ *
+ * @section DESCRIPTION
+ *
+ * This file contains the base layer class.
+ */
+
 #include "layer.h"
 #include "log.h"
 #include <algorithm>

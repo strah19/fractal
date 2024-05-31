@@ -21,7 +21,7 @@ namespace Fractal {
 			: size(size), index(0), normalized(normalized), type(type), offset(0) { }
 	};
 
-	static uint32_t GetSizeInBytes(VertexShaderType type) {
+	static uint32_t get_size_in_bytes(VertexShaderType type) {
 		switch (type)
 		{
 		case VertexShaderType::None: return 0;
@@ -40,34 +40,34 @@ namespace Fractal {
 	class VertexBufferLayout {
 	public:
 		VertexBufferLayout(const std::initializer_list<VertexBufferElement>& elements)
-			: elements(elements) {
-			Calculate();
+			: m_elements(elements) {
+			calculate();
 		}
 
 		VertexBufferLayout() { }
 
-		void AddToBuffer(const VertexBufferElement& element) {
-			elements.push_back(element);
-			elements.back().index = (uint32_t)(elements.size() - 1);
+		void add_to_buffer(const VertexBufferElement& element) {
+			m_elements.push_back(element);
+			m_elements.back().index = (uint32_t)(m_elements.size() - 1);
 		}
 
-		uint32_t Calculate() {
-			stride = 0;
-			for (auto& element : elements) {
-				element.offset = stride;
-				stride += element.size;
+		uint32_t calculate() {
+			m_stride = 0;
+			for (auto& element : m_elements) {
+				element.offset = m_stride;
+				m_stride += element.size;
 			}
 
-			return stride;
+			return m_stride;
 		}
 
-		std::vector<VertexBufferElement> GetLayout() const { return elements; }
-		VertexBufferElement LastElement() const { return elements.back(); }
+		std::vector<VertexBufferElement> get_layout() const { return m_elements; }
+		VertexBufferElement last_element() const { return m_elements.back(); }
 
-		uint32_t GetStride() const { return stride; }
+		uint32_t get_stride() const { return m_stride; }
 	private:
-		std::vector<VertexBufferElement> elements;
-		uint32_t stride = 0;
+		std::vector<VertexBufferElement> m_elements;
+		uint32_t m_stride = 0;
 	};
 
 	class VertexBuffer {
@@ -76,17 +76,17 @@ namespace Fractal {
 		VertexBuffer(float* vertices, uint32_t size);
 		virtual ~VertexBuffer();
 
-		void Bind();
-		void UnBind();
-		void SetData(void* data, uint32_t size, uint32_t offset = 0);
+		void bind();
+		void unbind();
+		void set_data(void* data, uint32_t size, uint32_t offset = 0);
 
-		uint32_t GetId() const { return vertex_buffer_id; }
+		uint32_t get_id() const { return m_vertex_buffer_id; }
 
-		void SetLayout(const VertexBufferLayout& lay) { layout = std::make_shared<VertexBufferLayout>(lay); }
-		std::shared_ptr<VertexBufferLayout> GetLayout() { return layout; }
+		void set_layout(const VertexBufferLayout& lay) { m_layout = std::make_shared<VertexBufferLayout>(lay); }
+		std::shared_ptr<VertexBufferLayout> get_layout() { return m_layout; }
 	private:
-		uint32_t vertex_buffer_id;
-		std::shared_ptr<VertexBufferLayout> layout;
+		uint32_t m_vertex_buffer_id;
+		std::shared_ptr<VertexBufferLayout> m_layout;
 	};
 
 	class IndexBuffer {
@@ -94,15 +94,15 @@ namespace Fractal {
 		IndexBuffer(uint32_t* indices, uint32_t size);
 		IndexBuffer(uint32_t size);
 		virtual ~IndexBuffer();
-		void SetData(uint32_t* data, uint32_t size);
+		void set_data(uint32_t* data, uint32_t size);
 
-		void Bind();
-		void UnBind();
-		uint32_t GetId() const { return index_buffer_id; }
-		uint32_t GetCount() const { return count; }
+		void bind();
+		void unbind();
+		uint32_t get_id() const { return m_index_buffer_id; }
+		uint32_t get_count() const { return m_count; }
 	private:
-		uint32_t index_buffer_id;
-		uint32_t count = 0;
+		uint32_t m_index_buffer_id;
+		uint32_t m_count = 0;
 	};
 
 	class UniformBuffer {
@@ -110,19 +110,19 @@ namespace Fractal {
 		UniformBuffer(uint32_t size, uint32_t bindpoint);
 		virtual ~UniformBuffer();
 
-		uint32_t GetUniformBlockId(uint32_t shader_id, const std::string& block_name);
-		void BindToBindPoint();
-		void BindToShader(uint32_t shader_id, const std::string& block_name);
-		void AllocateData(uint32_t size);
+		uint32_t get_uniform_block_id(uint32_t shader_id, const std::string& block_name);
+		void bind_to_bind_point();
+		void bind_to_shader(uint32_t shader_id, const std::string& block_name);
+		void allocate_data(uint32_t size);
 
-		void Bind();
-		void UnBind();
-		uint32_t GetId() const;
-		void SetData(void* data, uint32_t size, uint32_t offset);
+		void bind();
+		void unbind();
+		uint32_t get_id() const;
+		void set_data(void* data, uint32_t size, uint32_t offset);
 	private:
-		uint32_t uniform_buffer_id;
-		uint32_t uniform_buffer_point;
-		uint32_t size_of_buffer;
+		uint32_t m_uniform_buffer_id;
+		uint32_t m_uniform_buffer_point;
+		uint32_t m_size_of_buffer;
 	};
 
 	class IndirectDrawBuffer {
@@ -130,14 +130,14 @@ namespace Fractal {
 		IndirectDrawBuffer(uint32_t size);
 		virtual ~IndirectDrawBuffer();
 
-		void Bind();
-		void UnBind();
-		uint32_t GetId() const;
-		void SetData(void* data, uint32_t size, uint32_t offset);
-		void AllocateData(uint32_t size, void* data);
+		void bind();
+		void unbind();
+		uint32_t get_id() const;
+		void set_data(void* data, uint32_t size, uint32_t offset);
+		void allocate_data(uint32_t size, void* data);
 	private:
-		uint32_t indirect_buffer_id;
-		uint32_t size_of_buffer;
+		uint32_t m_indirect_buffer_id;
+		uint32_t m_size_of_buffer;
 	};
 
 	class ShaderStorageBuffer {
@@ -145,19 +145,19 @@ namespace Fractal {
 		ShaderStorageBuffer(uint32_t size, uint32_t bindpoint);
 		virtual ~ShaderStorageBuffer();
 
-		uint32_t GetUniformBlockId(uint32_t shader_id, const std::string& block_name);
-		void BindToBindPoint();
-		void BindToShader(uint32_t shader_id, const std::string& block_name);
+		uint32_t get_uniform_block_id(uint32_t shader_id, const std::string& block_name);
+		void bind_to_bind_point();
+		void bind_to_shader(uint32_t shader_id, const std::string& block_name);
 
-		void Bind();
-		void UnBind();
-		uint32_t GetId() const;
-		void SetData(void* data, uint32_t size, uint32_t offset);
-		void AllocateData(uint32_t size, void* data);
+		void bind();
+		void unbind();
+		uint32_t get_id() const;
+		void set_data(void* data, uint32_t size, uint32_t offset);
+		void allocate_data(uint32_t size, void* data);
 	private:
-		uint32_t shader_storage_id;
-		uint32_t binding_point;
-		uint32_t size_of_buffer;
+		uint32_t m_shader_storage_id;
+		uint32_t m_binding_point;
+		uint32_t m_size_of_buffer;
 	};
 }
 
