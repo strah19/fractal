@@ -81,17 +81,14 @@ namespace Fractal {
             MousePositionEvent event(xPos, yPos);
             m_event_callback(event);
         }); 
-
-        m_destroyed = false;
     }
 
     GLFWWindow::~GLFWWindow() {
-        if (!m_destroyed)
+        if (glfw_window_counter > 0) 
             destroy();
     }
 
     void GLFWWindow::destroy() {
-        m_destroyed = true;
         glfw_window_counter--;
         glfwDestroyWindow(m_window);
     }

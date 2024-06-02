@@ -43,6 +43,7 @@ namespace Fractal {
         static Application* m_instance;
         int m_fps = 0;
         float m_current_frame_time = 0.0f;
+        bool m_running = true;
 		friend int ::main(int argc, char** argv);
     };
 

@@ -36,12 +36,10 @@ namespace Fractal {
         virtual void quit() = 0;
         
         inline WindowProperties* properties() { return &m_properties; }
-        inline bool destroyed() const { return m_destroyed; }
         static Window* create_glfw_window(WindowProperties properties, const EventCallbackFn& event_callback);
     protected:
         WindowProperties m_properties;
         EventCallbackFn m_event_callback;
-        bool m_destroyed = false;
     };
 } // namespace Fractal
 

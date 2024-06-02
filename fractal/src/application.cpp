@@ -61,7 +61,7 @@ namespace Fractal {
         float last_frame_time = 0.0f;
         int interm_fps = 0;
 
-        while (!m_window->destroyed()) {
+        while (m_running) {
         	float current_time = Time::get_time(); 
             m_current_frame_time = current_time - last_frame_time;
             last_frame_time = current_time;
@@ -87,6 +87,8 @@ namespace Fractal {
             m_window->update();
             on_update();
         }
+
+		m_window->destroy();
     }
 
     int const Application::get_fps() {
@@ -103,7 +105,7 @@ namespace Fractal {
 	}
 
 	void Application::on_close(const QuitEvent& event) {
-		m_window->destroy();
+        m_running = false;
 	}
 
 	void Application::on_resize(const ResizeEvent& event) {
